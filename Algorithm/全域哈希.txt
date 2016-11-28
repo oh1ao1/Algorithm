@@ -1,0 +1,24 @@
+Hashing主要问题：
+1、Hash函数
+  使用Hash函数的不同对于Hashing表的dynamic set操作时间复杂度无影响（因为不受输入影响，都是O(1)）
+
+2、碰撞
+  但是使用不同的碰撞处理方式对于dynamic set操作时间复杂度存在影响
+	（a）链接法：
+		Hashing表的dynamic set操作时间复杂度是O(1 - 装载因子），其中：
+			O（1）是key映射为Hash值的时间，必须计算
+			装载因子是n / m（即平均一个槽中key的数量）
+		链接法可能导致所有key串成一个链表，对于槽数m的选择也比较苛刻
+
+	（b）Open Addressing法（开放寻址法）：
+		开放寻址则要求n <= m，对于Hash出相同的Hash值时，重新映射一次
+		重新映射的方法有：线性探查（h(key, i) = h(key, 0) + i）、double hashing（h(key, i) = h1(key) + i * h2(key)）
+		开放寻址的探查次数是O(1 / (1 - 装载因子))，因此使用开放寻址法的Hash表利用率并非越高越好。
+
+
+但是Hashing存在一个致命缺陷，无论使用什么样的Hash函数，都存在一个特殊的键集导致Hash表变得糟糕。
+因此，出现Universal Hash（全域哈希）的概念，构造一个Hash函数集，只要这个Hash函数集是全域的，就可以实现均匀哈希。
+构造Universal Hashing的经典方法是：
+	将key和随机因子a都转换为r + 1位的m进制数
+	H(key) = 累加（a的每一位 * k的每一位） mod 槽数m
+（证明十分巧妙）
